@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../store';
 import {
   Maximize2,
@@ -8,7 +8,9 @@ import {
   Square,
   Server,
   Settings,
-  LayoutGrid
+  LayoutGrid,
+  Bell,
+  AlertCircle
 } from 'lucide-react';
 
 interface ControlPanelProps {
@@ -22,7 +24,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   onLayoutChange,
   onNavigate
 }) => {
-  const { config, isFullscreen, isPolling, setIsPolling } = useAppStore();
+  const { config, isFullscreen, isPolling, setIsPolling, alarms, setAlarms } = useAppStore();
+  const [unhandledCount, setUnhandledCount] = useState(0);
 
   const layoutOptions = [
     { value: '1', label: '1' },
@@ -30,6 +33,24 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     { value: '1_9', label: '9' },
     { value: '16', label: '16' }
   ];
+
+  useEffect(() => {
+    const fetchAlarms = async () => {
+      try {
+        const response = await fetch('/api/alarm/list');
+        const data = await response.json();
+        setAlarms(data.alarms);
+        const unhandled = data.alarms.filter((a: any) => a.HandleStatus === '未处理').length;
+        setUnhandledCount(unhandled);
+      } catch (error) {
+        console.error('Error fetching alarms:', error);
+      }
+    };
+
+    fetchAlarms();
+    const interval = setInterval(fetchAlarms, 10000);
+    return () => clearInterval(interval);
+  }, [setAlarms]);
 
   return (
     <div className="bg-gray-800 border-b border-gray-700 px-4 py-2">
@@ -69,6 +90,18 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             <span className="text-sm">{isPolling ? 'Stop' : 'Poll'}</span>
           </button>
           <div className="h-6 w-px bg-gray-600" />
+          <button
+            onClick={() => onNavigate('alarmList')}
+            className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white flex items-center space-x-2 relative"
+          >
+            <Bell className="w-5 h-5" />
+            <span className="text-sm">Alarms</span>
+            {unhandledCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full animate-pulse">
+                {unhandledCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => onNavigate('devices')}
             className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white flex items-center space-x-2"

@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 
 interface NVR {
@@ -20,6 +21,35 @@ interface IPC {
   IPCUse: string;
 }
 
+interface Alarm {
+  AlarmID: string;
+  IPCID: string;
+  AlarmType: string;
+  AlarmTime: string;
+  AlarmDesc: string;
+  AlarmLevel: string;
+  VideoPath: string;
+  ImagePath: string;
+  HandleStatus: string;
+  HandleDesc?: string;
+  HandleTime?: string;
+}
+
+interface AlarmImage {
+  ImageID: string;
+  AlarmID: string;
+  ImagePath: string;
+  CreateTime: string;
+}
+
+interface AlarmVideo {
+  VideoID: string;
+  AlarmID: string;
+  VideoPath: string;
+  VideoDuration: number;
+  CreateTime: string;
+}
+
 interface AppState {
   nvrs: NVR[];
   ipcs: IPC[];
@@ -29,6 +59,12 @@ interface AppState {
   selectedChannel: number | null;
   isFullscreen: boolean;
   isPolling: boolean;
+  alarms: Alarm[];
+  currentAlarm: {
+    alarm?: Alarm;
+    images: AlarmImage[];
+    videos: AlarmVideo[];
+  } | null;
 
   setNvrs: (nvrs: NVR[]) => void;
   setIpcs: (ipcs: IPC[]) => void;
@@ -39,6 +75,10 @@ interface AppState {
   setIsFullscreen: (isFull: boolean) => void;
   setIsPolling: (isPolling: boolean) => void;
   updateRtspAddr: (index: number, addr: string) => void;
+  setAlarms: (alarms: Alarm[]) => void;
+  setCurrentAlarm: (alarm: any) => void;
+  addAlarm: (alarm: Alarm) => void;
+  updateAlarm: (alarmId: string, update: Partial<Alarm>) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -50,6 +90,8 @@ export const useAppStore = create<AppState>((set) => ({
   selectedChannel: null,
   isFullscreen: false,
   isPolling: false,
+  alarms: [],
+  currentAlarm: null,
 
   setNvrs: (nvrs) => set({ nvrs }),
   setIpcs: (ipcs) => set({ ipcs }),
@@ -65,4 +107,16 @@ export const useAppStore = create<AppState>((set) => ({
       newAddrs[index] = addr;
       return { rtspAddrs: newAddrs };
     }),
+  setAlarms: (alarms) => set({ alarms }),
+  setCurrentAlarm: (alarmData) => set({ currentAlarm: alarmData }),
+  addAlarm: (alarm) =>
+    set((state) => ({
+      alarms: [alarm, ...state.alarms]
+    })),
+  updateAlarm: (alarmId, update) =>
+    set((state) => ({
+      alarms: state.alarms.map(alarm =>
+        alarm.AlarmID === alarmId ? { ...alarm, ...update } : alarm
+      )
+    }))
 }));

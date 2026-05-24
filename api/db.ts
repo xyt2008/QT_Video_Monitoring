@@ -38,6 +38,44 @@ function initDatabase() {
     )
   `);
 
+  // 报警信息表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS AlarmInfo (
+      AlarmID TEXT PRIMARY KEY,
+      IPCID TEXT,
+      AlarmType TEXT,
+      AlarmTime TEXT,
+      AlarmDesc TEXT,
+      AlarmLevel TEXT DEFAULT '普通',
+      VideoPath TEXT,
+      ImagePath TEXT,
+      HandleStatus TEXT DEFAULT '未处理',
+      HandleDesc TEXT,
+      HandleTime TEXT
+    )
+  `);
+
+  // 报警图片表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS AlarmImage (
+      ImageID TEXT PRIMARY KEY,
+      AlarmID TEXT,
+      ImagePath TEXT,
+      CreateTime TEXT
+    )
+  `);
+
+  // 报警视频表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS AlarmVideo (
+      VideoID TEXT PRIMARY KEY,
+      AlarmID TEXT,
+      VideoPath TEXT,
+      VideoDuration INTEGER,
+      CreateTime TEXT
+    )
+  `);
+
   // 配置表
   db.exec(`
     CREATE TABLE IF NOT EXISTS Config (

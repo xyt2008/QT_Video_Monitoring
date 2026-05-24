@@ -1,23 +1,26 @@
-import { useState } from 'react';
+
+import React, { useState } from 'react';
 import MainMonitor from './pages/MainMonitor';
 import DeviceManager from './pages/DeviceManager';
 import SystemConfig from './pages/SystemConfig';
 
-export default function App() {
-  const [currentPage, setCurrentPage] = useState('main');
+const App: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<string>('main');
 
   const renderPage = () => {
     switch (currentPage) {
       case 'main':
-        return &lt;MainMonitor onNavigate={setCurrentPage} /&gt;;
+        return <MainMonitor onNavigate={setCurrentPage} />;
       case 'devices':
-        return &lt;DeviceManager onNavigate={setCurrentPage} /&gt;;
+        return <DeviceManager onNavigate={setCurrentPage} />;
       case 'config':
-        return &lt;SystemConfig onNavigate={setCurrentPage} /&gt;;
+        return <SystemConfig onNavigate={setCurrentPage} />;
       default:
-        return &lt;MainMonitor onNavigate={setCurrentPage} /&gt;;
+        return <MainMonitor onNavigate={setCurrentPage} />;
     }
   };
 
-  return renderPage();
-}
+  return <div className="min-h-screen">{renderPage()}</div>;
+};
+
+export default App;

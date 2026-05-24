@@ -2,105 +2,90 @@
 import React from 'react';
 import { useAppStore } from '../store';
 import {
-  Monitor,
+  Maximize2,
+  Minimize2,
   Play,
   Square,
   Server,
-  Camera,
-  RotateCcw,
   Settings,
-  Maximize2,
-  Minimize2,
-  LayoutGrid,
+  LayoutGrid
 } from 'lucide-react';
 
 interface ControlPanelProps {
-  onFullscreenToggle: () =&gt; void;
-  onLayoutChange: (layout: string) =&gt; void;
-  onNavigate: (page: string) =&gt; void;
+  onFullscreenToggle: () => void;
+  onLayoutChange: (layout: string) => void;
+  onNavigate: (page: string) => void;
 }
 
-const ControlPanel: React.FC&lt;ControlPanelProps&gt; = ({
+const ControlPanel: React.FC<ControlPanelProps> = ({
   onFullscreenToggle,
   onLayoutChange,
-  onNavigate,
-}) =&gt; {
+  onNavigate
+}) => {
   const { config, isFullscreen, isPolling, setIsPolling } = useAppStore();
 
   const layoutOptions = [
-    { value: '1', label: '1画面' },
-    { value: '1_4', label: '4画面' },
-    { value: '1_9', label: '9画面' },
-    { value: '16', label: '16画面' },
+    { value: '1', label: '1' },
+    { value: '1_4', label: '4' },
+    { value: '1_9', label: '9' },
+    { value: '16', label: '16' }
   ];
 
   return (
-    &lt;div className="bg-gray-800 border-b border-gray-700 px-4 py-2"&gt;
-      &lt;div className="flex items-center justify-between"&gt;
-        &lt;div className="flex items-center space-x-4"&gt;
-          &lt;h1 className="text-white font-semibold text-lg"&gt;
-            {config.AppTitle || '智能视频监控系统'}
-          &lt;/h1&gt;
-        &lt;/div&gt;
-
-        &lt;div className="flex items-center space-x-2"&gt;
-          {/* 布局选择 */}
-          &lt;div className="flex items-center space-x-1"&gt;
-            &lt;LayoutGrid className="w-4 h-4 text-gray-400" /&gt;
-            {layoutOptions.map((layout) =&gt; (
-              &lt;button
+    <div className="bg-gray-800 border-b border-gray-700 px-4 py-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <h1 className="text-white font-semibold text-lg">
+            {config.AppTitle || 'Video Monitor'}
+          </h1>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
+            <LayoutGrid className="w-4 h-4 text-gray-400" />
+            {layoutOptions.map((layout) => (
+              <button
                 key={layout.value}
-                onClick={() =&gt; onLayoutChange(layout.value)}
-                className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors"
-              &gt;
+                onClick={() => onLayoutChange(layout.value)}
+                className="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded"
+              >
                 {layout.label}
-              &lt;/button&gt;
+              </button>
             ))}
-          &lt;/div&gt;
-
-          &lt;div className="h-6 w-px bg-gray-600" /&gt;
-
-          {/* 全屏按钮 */}
-          &lt;button
+          </div>
+          <div className="h-6 w-px bg-gray-600" />
+          <button
             onClick={onFullscreenToggle}
-            className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white transition-colors"
-            title={isFullscreen ? '退出全屏' : '全屏'}
-          &gt;
-            {isFullscreen ? &lt;Minimize2 className="w-5 h-5" /&gt; : &lt;Maximize2 className="w-5 h-5" /&gt;}
-          &lt;/button&gt;
-
-          {/* 轮询按钮 */}
-          &lt;button
-            onClick={() =&gt; setIsPolling(!isPolling)}
-            className={`p-2 rounded transition-colors flex items-center space-x-1
-              ${isPolling ? 'bg-green-600 text-white' : 'hover:bg-gray-700 text-gray-300 hover:text-white'}
-            `}
-          &gt;
-            {isPolling ? &lt;Square className="w-5 h-5" /&gt; : &lt;Play className="w-5 h-5" /&gt;}
-            &lt;span className="text-sm"&gt;{isPolling ? '停止轮询' : '启动轮询'}&lt;/span&gt;
-          &lt;/button&gt;
-
-          &lt;div className="h-6 w-px bg-gray-600" /&gt;
-
-          {/* 导航按钮 */}
-          &lt;button
-            onClick={() =&gt; onNavigate('devices')}
-            className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white transition-colors flex items-center space-x-1"
-          &gt;
-            &lt;Server className="w-5 h-5" /&gt;
-            &lt;span className="text-sm"&gt;设备管理&lt;/span&gt;
-          &lt;/button&gt;
-
-          &lt;button
-            onClick={() =&gt; onNavigate('config')}
-            className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white transition-colors flex items-center space-x-1"
-          &gt;
-            &lt;Settings className="w-5 h-5" /&gt;
-            &lt;span className="text-sm"&gt;系统配置&lt;/span&gt;
-          &lt;/button&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+            className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white"
+          >
+            {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+          </button>
+          <button
+            onClick={() => setIsPolling(!isPolling)}
+            className={`p-2 rounded flex items-center space-x-2 ${
+              isPolling ? 'bg-green-600 text-white' : 'hover:bg-gray-700 text-gray-300 hover:text-white'
+            }`}
+          >
+            {isPolling ? <Square className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+            <span className="text-sm">{isPolling ? 'Stop' : 'Poll'}</span>
+          </button>
+          <div className="h-6 w-px bg-gray-600" />
+          <button
+            onClick={() => onNavigate('devices')}
+            className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white flex items-center space-x-2"
+          >
+            <Server className="w-5 h-5" />
+            <span className="text-sm">Devices</span>
+          </button>
+          <button
+            onClick={() => onNavigate('config')}
+            className="p-2 hover:bg-gray-700 rounded text-gray-300 hover:text-white flex items-center space-x-2"
+          >
+            <Settings className="w-5 h-5" />
+            <span className="text-sm">Config</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
